@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Virtual environments
+venv/
+.env
+
+# Docker volumes
+*.pid
+*.sock
+
+# Byte-compiled / cache
+*.pyc
+*.pyo
+*.pyd
+*.pycache
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MySQL dump or local temp data
+mysql_data/
