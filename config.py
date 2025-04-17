@@ -7,6 +7,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 CHANNEL_ID = os.getenv("CHANNEL_ID", "")
 GROUP_ID = os.getenv("GROUP_ID", "")
+BOT_USERNAME = os.getenv("BOT_USERNAME", "")
 
 
 DB_HOST = os.getenv("MYSQL_HOST")
