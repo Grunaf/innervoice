@@ -3,3 +3,4 @@ python-dotenv==1.0.0
 SQLAlchemy==2.0.30
 aiomysql==0.2.0
 cryptography
+alembic
