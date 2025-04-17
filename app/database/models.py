@@ -9,6 +9,9 @@ class User(Base):
     telegram_id = Column(Integer, unique=True, nullable=False)
     generated_username = Column(String(50), unique=True)
     posts_count = Column(Integer, default=0)
+    role = Column(String(20), default="user")
+    telegram_username = Column(String(255), nullable=True)
+
 
     posts = relationship("Post", back_populates="author")
 
