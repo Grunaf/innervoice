@@ -12,7 +12,7 @@ from app.database.models import Post, Reply, User
 from app.database.db import async_session
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from decorators.permissions import admin_only
+from app.decorators.permissions import admin_only
 import logging
 
 logger = logging.getLogger(__name__)
