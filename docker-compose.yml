@@ -30,7 +30,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512М
+          memory: 512M
 
 volumes:
   mysql_data:
