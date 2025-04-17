@@ -2,14 +2,14 @@ import os
 from dotenv import load_dotenv
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, pool
 from alembic import context
-
-from app.database.models import Base
-from config import DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
+from sqlalchemy import engine_from_config, pool
 
 # Загружаем .env (если не загружается где-то выше)
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
+
+from config import DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
+from app.database.models import Base
 
 # Формируем строку подключения
 SQLALCHEMY_DATABASE_URL = (
