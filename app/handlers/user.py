@@ -1,10 +1,10 @@
 from aiogram import Router, F
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from config import ADMIN_ID, CHANNEL_ID, GROUP_ID, BOT_USERNAME
-from app.services.moderation import save_message, get_queued_message
+from app.services.moderation import save_message
 from app.texts.messages import WELCOME_TEXT, WAIT_MODERATION_TEXT
 from app.utils.keyboards import get_reply_keyboard
 from app.database.models import Post, Reply
