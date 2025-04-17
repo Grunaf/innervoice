@@ -137,9 +137,6 @@ class ReplyState(StatesGroup):
 class PostState(StatesGroup):
     waiting_for_text = State()
     
-@router.message(F.text & ~F.text.startswith("/"))
-async def fallback(message: Message):
-    await message.answer("✉️ Чтобы отправить пост, сначала напиши /post")
 
 @router.message(Command("post"))
 async def start_post(message: Message, state: FSMContext):
@@ -174,6 +171,13 @@ async def receive_post(message: Message, state: FSMContext):
     await message.answer(WAIT_MODERATION_TEXT)
     await state.clear()
 
+@router.message(F.text & ~F.text.startswith("/"))
+async def fallback(message: Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state is not None:
+        return 
+    
+    await message.answer("✉️ Чтобы отправить пост, сначала напиши /post")
 
 @router.message(ReplyState.waiting_for_reply_text)
 async def send_reply(message: Message, state: FSMContext):
