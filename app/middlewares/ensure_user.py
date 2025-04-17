@@ -25,7 +25,7 @@ class EnsureUserMiddleware(BaseMiddleware):
         user = getattr(event, "from_user", None)
 
         if user:
-            await ensure_user_exists(user.id, session, user.telegram_username)
+            await ensure_user_exists(user.id, session, user.username)
 
         return await handler(event, data)
 
