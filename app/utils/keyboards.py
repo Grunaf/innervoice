@@ -12,13 +12,13 @@ def get_reply_keyboard(post_id: int, bot_username: str) -> InlineKeyboardMarkup:
         ]
     )
 
-
 def moderation_keyboard(post_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton("✅ Одобрить", callback_data=f"approve:{post_id}"),
-                InlineKeyboardButton("❌ Отклонить", callback_data=f"reject:{post_id}")
+                InlineKeyboardButton(text="✅ Одобрить", callback_data=f"approve:{post_id}"),
+                InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject:{post_id}")
             ]
         ]
     )
+
