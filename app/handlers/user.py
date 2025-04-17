@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, CommandStart, CommandObject
 from aiogram.fsm.state import State, StatesGroup
 from config import ADMIN_ID, CHANNEL_ID, GROUP_ID, BOT_USERNAME
-from app.services.moderation import save_message
+from app.services.moderation import save_message, get_post_by_id
 from app.texts.messages import WELCOME_TEXT, WAIT_MODERATION_TEXT
 from app.utils.keyboards import get_reply_keyboard
 from app.database.models import Post, Reply, User
@@ -130,39 +130,50 @@ async def reject_post(callback: CallbackQuery):
     await callback.answer()
 
 
+# FSM для ответа
+class ReplyState(StatesGroup):
+    waiting_for_reply_text = State()
 
-@router.message(F.text)
-async def handle_text(message: Message):
-    text = message.text.strip()
-    if not text:
-        await message.answer("⚠️ Сообщение не может быть пустым.")
-        return
-
-    if len(text) < 5:
-        await message.answer("⚠️ Сообщение слишком короткое. Напиши чуть подробнее.")
-        return
+class PostState(StatesGroup):
+    waiting_for_text = State()
     
+@router.message(F.text & ~F.text.startswith("/"))
+async def fallback(message: Message):
+    await message.answer("✉️ Чтобы отправить пост, сначала напиши /post")
+
+@router.message(Command("post"))
+async def start_post(message: Message, state: FSMContext):
+    await message.answer("✍️ Напиши текст поста, который отправим на модерацию.")
+    await state.set_state(PostState.waiting_for_text)
+
+@router.message(PostState.waiting_for_text)
+async def receive_post(message: Message, state: FSMContext):
+    text = message.text.strip()
+    if not text or len(text) < 5:
+        await message.answer("⚠️ Сообщение пустое или слишком короткое.")
+        return
+
     async with async_session() as session:
+        user = await session.scalar(select(User).where(User.telegram_id == message.from_user.id))
+
         result = await session.execute(
             select(Post).where(
                 Post.text == text,
-                Post.author_id == message.from_user.id
+                Post.author_id == user.id
             )
         )
         duplicate = result.scalar_one_or_none()
 
         if duplicate:
             await message.answer("⚠️ Похожее сообщение уже отправлено. Пожалуйста, подожди модерацию.")
+            await state.clear()
             return
-        
+
     await save_message(message)
     logger.info(f"Создан новый пост от {message.from_user.id}")
     await message.answer(WAIT_MODERATION_TEXT)
+    await state.clear()
 
-# FSM для ответа
-class ReplyState(StatesGroup):
-    waiting_for_reply_text = State()
-from app.services.moderation import get_post_by_id
 
 @router.message(ReplyState.waiting_for_reply_text)
 async def send_reply(message: Message, state: FSMContext):

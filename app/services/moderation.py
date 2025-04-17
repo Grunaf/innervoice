@@ -30,7 +30,7 @@ async def save_message(message: Message):
                 text=(
                     f"📝 Новое сообщение для модерации:\n\n"
                     f"{text}\n\n"
-                    f"ID: <code>{new_post.id}</code>"
+                    f"post ID: <code>{new_post.id}</code>"
                 ),
                 reply_markup=moderation_keyboard(new_post.id)
             )

@@ -5,6 +5,7 @@ from app.bot import start_bot
 from config import BOT_TOKEN
 from app.middlewares.ensure_user import EnsureUserMiddleware
 from app.middlewares.db_session import DbSessionMiddleware
+from app.middlewares.private_only import PrivateChatOnlyMiddleware
 from app.database.models import Base
 from app.database.db import engine
 
@@ -18,6 +19,7 @@ async def main():
     bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
     dp = Dispatcher()
     
+    dp.message.middsleware(PrivateChatOnlyMiddleware())
     dp.message.middleware(DbSessionMiddleware())
     dp.message.middleware(EnsureUserMiddleware())
 
