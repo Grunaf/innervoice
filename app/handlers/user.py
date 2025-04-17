@@ -76,7 +76,6 @@ async def handle_start(message: Message, state: FSMContext, command: CommandStar
 async def approve_post(callback: CallbackQuery):
     post_id = int(callback.data.split(":")[1])
     post = await get_post_by_id(post_id)
-    logger.info(f"Одобрение поста {post.id} модератором {callback.from_user.id}")
 
     if not post or post.status != "pending":
         await callback.message.edit_text("⚠ Сообщение не найдено или уже обработано.")
@@ -89,8 +88,15 @@ async def approve_post(callback: CallbackQuery):
     )
 
     async with async_session() as session:
+        moderator = await session.scalar(
+            select(User).where(User.telegram_id == callback.from_user.id)
+        )
+
+        logger.info(f"Одобрение поста {post.id} модератором {moderator.id}")
+
         post.status = "approved"
         post.message_id_in_channel = msg.message_id
+        post.moderated_by = moderator.id  # ✅ внутренний ID
         session.add(post)
         await session.commit()
 
@@ -98,23 +104,31 @@ async def approve_post(callback: CallbackQuery):
     await callback.answer()
 
 
+
 @router.callback_query(F.data.startswith("reject:"))
 async def reject_post(callback: CallbackQuery):
     post_id = int(callback.data.split(":")[1])
     post = await get_post_by_id(post_id)
-    logger.info(f"Отклонение поста {post.id} модератором {callback.from_user.id}")
 
     if not post or post.status != "pending":
         await callback.message.edit_text("⚠ Уже обработано или не найдено.")
         return
 
     async with async_session() as session:
+        moderator = await session.scalar(
+            select(User).where(User.telegram_id == callback.from_user.id)
+        )
+
+        logger.info(f"Отклонение поста {post.id} модератором {moderator.id}")
+
         post.status = "rejected"
+        post.moderated_by = moderator.id  # ✅
         session.add(post)
         await session.commit()
 
     await callback.message.edit_text("❌ Сообщение отклонено.")
     await callback.answer()
+
 
 
 @router.message(F.text)
@@ -182,15 +196,16 @@ async def send_reply(message: Message, state: FSMContext):
         
         # Сохраняем ответ в базу данных
         async with async_session() as session:
+            user = await session.scalar(select(User).where(User.telegram_id == message.from_user.id))
             new_reply = Reply(
                 text=reply_text,
                 parent_post_id=post.id,
-                author_id=message.from_user.id,
+                author_id=user.id,
                 message_id_in_group=sent.message_id
             )
             session.add(new_reply)
             await session.commit()
-        logger.info(f"Ответ на пост {post.id} от {message.from_user.id}")
+        logger.info(f"Ответ на пост {post.id} от {user.id}")
 
         await message.answer("Ответ отправлен в обсуждение.")
     except Exception as e:

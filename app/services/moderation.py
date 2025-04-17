@@ -3,13 +3,11 @@ from aiogram.types import Message
 from aiogram import Bot
 from app.database.db import async_session
 from app.utils.keyboards import moderation_keyboard
-from app.database.models import Post
-
+from app.database.models import Post, User
+from sqlalchemy import select
 
 # временное хранилище сообщений
 message_queue = {}
-
-
 
 async def save_message(message: Message):
     bot: Bot = message.bot
@@ -17,9 +15,10 @@ async def save_message(message: Message):
     text = message.text
 
     async with async_session() as session:
+        user = await session.scalar(select(User).where(User.telegram_id == message.from_user.id))
         new_post = Post(
             text=text,
-            author_id=user_id,
+            author_id=user.id,
             status="pending"
         )
         session.add(new_post)
