@@ -10,8 +10,8 @@ GROUP_ID = os.getenv("GROUP_ID", "")
 BOT_USERNAME = os.getenv("BOT_USERNAME", "")
 
 
-DB_HOST = os.getenv("MYSQL_HOST")
-DB_PORT = os.getenv("MYSQL_PORT")
-DB_NAME = os.getenv("MYSQL_DATABASE")
-DB_USER = os.getenv("MYSQL_USER")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("MYSQL_PASSWORD")
