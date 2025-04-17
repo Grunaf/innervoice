@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, func
+from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey, DateTime, Text, func
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -6,7 +6,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    telegram_id = Column(Integer, unique=True, nullable=False)
+    telegram_id = Column(BigInteger, unique=True, nullable=False)
     generated_username = Column(String(50), unique=True)
     posts_count = Column(Integer, default=0)
     role = Column(String(20), default="user")
@@ -20,8 +20,8 @@ class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True)
     text = Column(Text, nullable=False)
-    message_id_in_channel = Column(Integer)
-    message_id_in_group = Column(Integer, nullable=True)
+    message_id_in_channel = Column(BigInteger)
+    message_id_in_group = Column(BigInteger, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     author_id = Column(Integer, ForeignKey("users.id"))
 
