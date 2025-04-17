@@ -1,4 +1,4 @@
-from config import ADMIN_ID, CHANNEL_ID
+from config import ADMIN_ID
 from aiogram.types import Message
 from aiogram import Bot
 from app.database.db import async_session

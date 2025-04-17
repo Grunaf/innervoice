@@ -3,7 +3,8 @@ import logging
 from aiogram import Bot, Dispatcher
 from app.bot import start_bot
 from config import BOT_TOKEN
-from app.middlewares.ensure_user import EnsureUserMiddleware, DbSessionMiddleware
+from app.middlewares.ensure_user import EnsureUserMiddleware
+from app.middlewares.db_session import DbSessionMiddleware
 from app.database.models import Base
 from app.database.db import engine
 
