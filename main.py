@@ -19,7 +19,7 @@ async def main():
     bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
     dp = Dispatcher()
     
-    dp.message.middsleware(PrivateChatOnlyMiddleware())
+    dp.message.middleware(PrivateChatOnlyMiddleware())
     dp.message.middleware(DbSessionMiddleware())
     dp.message.middleware(EnsureUserMiddleware())
 
